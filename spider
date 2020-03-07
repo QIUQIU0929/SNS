@@ -1,0 +1,96 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[1]:
+
+
+import requests
+import re
+import os
+import csv
+import lxml.etree as etree
+import urllib.request
+
+
+# In[4]:
+
+
+def read_country_code():
+    with open('country_code.csv', 'r') as csvfile:
+        country = csv.reader(csvfile)
+
+        code = [row[1] for row in country]
+    #             print(code)
+    # code = row[2] in country
+    #             print(type(code[1:]))
+    return code
+
+
+# In[10]:
+
+
+# 爬虫
+# listpdf：list——爬出来的很长的url
+# urlpdf：element——一个很长的url，存在pdfurl list里面
+def spider():
+    listpdf = []
+    code = read_country_code()
+    code = code[1:]
+    index = 0
+    startcountry = index//5
+    for code_country in code[startcountry:50]:
+
+        for num in range (5,10):
+            num = num * 10
+            # get url addresses from different countries
+            web_pdf = requests.get(
+                'https://www.google.com/search?q=filetype+pdf+site::' + code_country + '&start=' + str(num))
+            html = web_pdf.text.encode('utf8')
+            # require source code of websites which contains pdf files
+            with open('appendix/applistpdf' + str(index) + '.html', 'wb') as f:
+                f.write(html)
+                index += 1
+
+
+def get_url(html):
+    # write all requried addresses in a text.file
+    selector = etree.HTML(html)
+    urlpdf = selector.xpath('//div[@id="main"]//a[contains(@href,"/url?q")]/@href')
+    # print(urlpdf)
+    for i in range(len(urlpdf)):
+        urlpdf[i] = urlpdf[i][7:urlpdf[i].find('&sa=')]
+    with open('pdfurl.txt','a') as f:
+        for i in urlpdf:
+            f.write(i)
+            f.write('\n')
+
+
+# In[13]:
+
+
+# # 简化url 长度
+# def SimplifyUrl():
+#     urlList = []
+#     listpdf = spider()
+#
+#     for fullUrl in listpdf:
+#         for suffix in fullUrl:
+#             suffix = suffix[7:]
+#             suffix = suffix[:suffix.find('&sa=')]
+#             urlList.append(suffix)
+#     # print(urllist)
+#
+#     for rootUrl in urlList:
+#         # 保存简化的url存在txt文件里
+#         with open('urlParseSimplified.txt', 'a') as webpageAddress:
+#             webpageAddress.write(rootUrl + '\n')
+
+
+# spider()
+for i in range(150):
+    try:
+        with open('appendix/applistpdf' + str(i) + '.html','r') as f:
+            html = f.read()
+            get_url(html)
+    except:
+        pass

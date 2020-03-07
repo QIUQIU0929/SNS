@@ -1,0 +1,96 @@
+import urllib
+import os
+import requests
+import socket
+import struct
+from socket import gethostbyname
+from urllib.parse import urlparse
+# from calculation_thr import *
+
+def acquire_IP():
+    with open("throughput.txt", "r") as f:
+        lines = f.readlines()
+        # print(lines)
+    for line in lines:
+        # print(line)
+        url = line[line.find('//')+2:]
+        # print(url)
+        domain = url[:url.find('/')]
+        row = line.split('=')
+        tp = row[1]
+        # print(domain)
+
+
+        try:
+            ip = socket.gethostbyname(domain)
+            print(ip)
+            with open('ip_duplication.txt', 'a') as p:
+                p.write(ip+'='+row[1])
+        except:
+            pass
+
+#throughput = list
+#ip_list = list
+#ip, thrput = list
+
+def deduplication():
+    index = 0
+    # with open('ip_duplication.txt', 'r') as f:
+    #     ip_list = f.readlines()
+
+    res_ip = []
+    res_tp = []
+    with open ('ip_duplication.txt', 'r' ) as p:
+        data = p.readlines()
+        for i in data:
+            row = data.split('=')
+            res_ip.append(row[0])
+            res_tp.append(row[1])
+            if i in res_ip:
+                y = res_ip.index(res_tp)
+
+
+
+
+
+
+
+
+    #
+    # for ip_address in ip_list:
+    #     for thrput in throughtput:
+    #         if not ip_address in ip:
+    #             ip.append(ip_address)
+    #             throughtput.append(thrput)
+    #             index += 1
+    #         else:
+    #             if throughtput[index] >
+
+
+
+
+
+        # print(temp)
+
+
+
+
+
+def binary_trans():
+    with open('ip_duplication.txt', 'r') as w:
+        ipaddress = w.readlines()
+    for ip in ipaddress:
+        if ip.count('.') != 3:
+            return 0
+        else:
+            apart = ip.split('.')
+            # print(type(apart))
+            ip_binary = ''
+            for i in apart:
+                ip_binary += format(int(i), '08b')
+
+
+
+
+acquire_IP()
+

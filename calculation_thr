@@ -1,0 +1,57 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[1]:
+import time
+import requests
+import os
+
+
+def Calculation_throughput():
+    with open('pdfurl_1.txt', 'r') as f:
+        lines = f.readlines()
+        f.close()
+
+    for line in lines:
+        try:
+            # print("Processing:\n" + line)
+
+            tin = time.time()
+            # print(t)
+
+            page = requests.get(line)
+            content = page.content
+            volumn = len(content)
+
+            tout = time.time()
+            # print(tout)
+
+            t_process = tout - tin
+            # print(t_process)
+
+            throughput = volumn / t_process
+            print(throughput)
+
+            r = requests.get(url=line)
+            print(r.status_code)
+
+            if r.status_code == 200:
+                print(r.status_code)
+                with open('throughput.txt', 'a') as f2:
+                    # print("ji jiang xie ru",line)
+                        line = line.strip('\n')
+                        f2.write( str(line) + "=" + str(throughput) + '\n')
+                        f2.close()
+            # else:
+            #     print('ju jue xie ru')
+        except Exception as e:
+            print('Error:')
+            # print(e)
+
+            # In[ ]:
+
+
+
+
+Calculation_throughput()
+
